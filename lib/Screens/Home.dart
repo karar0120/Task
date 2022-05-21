@@ -1,7 +1,6 @@
 
 import 'package:flutter/material.dart';
 
-import '../Business_logic/cubit/App_cubit.dart';
 import '../Data/Modal/categoriesModal.dart';
 
 class Home extends StatelessWidget {
@@ -11,10 +10,8 @@ class Home extends StatelessWidget {
     return Container(
       child: Center(child: IconButton(
         onPressed: (){
-          HomeCubit.get(context).GetdataFormApi();
-
         },
-        icon: Icon(Icons.done,size: 50,),
+        icon: Icon(Icons.home,size: 50,),
       )),
     );
   }

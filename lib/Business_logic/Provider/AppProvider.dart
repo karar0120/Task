@@ -1,26 +1,21 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:noon/Data/Web_server/webServer.dart';
-import 'package:noon/Screens/Cateogries.dart';
+import 'package:flutter/material.dart';
 
 import '../../Data/Modal/categoriesModal.dart';
 import '../../Data/Modal/products.dart';
+import '../../Data/Web_server/webServer.dart';
 import '../../Screens/Cart.dart';
+import '../../Screens/Cateogries.dart';
 import '../../Screens/Home.dart';
 import '../../Screens/Profile.dart';
-import 'App_state.dart';
 
-class HomeCubit extends Cubit<HomeState> {
-  HomeCubit() : super(initialState());
-
-  static HomeCubit get(context) => BlocProvider.of(context);
+class AppProvider extends ChangeNotifier {
   int CurrentIndex = 0;
 
   void ChangeBottomNavigationBar(int index) {
     CurrentIndex = index;
-    emit(changeBottomNavigationBar());
+    notifyListeners();
   }
 
   List<Widget> Pages = [
@@ -35,27 +30,24 @@ class HomeCubit extends Cubit<HomeState> {
     "Profile",
     "Cart",
   ];
-
- late categories Categories;
+  categories? Categories;
 
   void GetdataFormApi() async {
-    emit(GetDataLoadingState());
     WebServer.getdate(
             url:
                 "https://sae-marketing.com/NOON/api/LoadProductsTypeCategoriesPage.php")
         .then((value) {
       final convert = jsonDecode(value.data);
       Categories = categories.fromJson(convert);
-      emit(GetDataEnterState());
+      notifyListeners();
     }).catchError((error) {
-      emit(GetDataErrorState(error: error));
+      // notifyListeners();
     });
   }
 
- late product Product;
+  product? Product;
 
   void PostData({required String ProductId}) async {
-    emit(PostDataLoadingState());
     WebServer.PostData(
         uri:
             "https://sae-marketing.com/NOON/api/LoadAllProductsOfSpecificProductsType.php",
@@ -64,10 +56,9 @@ class HomeCubit extends Cubit<HomeState> {
         }).then((value) {
       final convert = jsonDecode(value.data);
       Product = product.fromJson(convert);
-      emit(PostDataEnterState(Proudacts: Product));
+      notifyListeners();
     }).catchError((error) {
       print(error.toString());
-      emit(PostDataErrorState(erorr: error.toString()));
     });
   }
 }

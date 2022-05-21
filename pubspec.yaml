@@ -38,6 +38,8 @@ dependencies:
   dio: ^4.0.4
   http: ^0.13.4
   conditional_builder: ^1.0.2
+  provider: ^6.0.2
+  get: ^4.6.1
 
 dev_dependencies:
   flutter_test:

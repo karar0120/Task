@@ -3,16 +3,16 @@
 import 'package:conditional_builder/conditional_builder.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:noon/Business_logic/cubit/App_cubit.dart';
-import 'package:noon/Business_logic/cubit/App_state.dart';
+import 'package:noon/Business_logic/Provider/AppProvider.dart';
+
 import 'package:noon/Data/Modal/products.dart';
+import 'package:provider/provider.dart';
 
 class products extends StatefulWidget {
   String ProductTypeId;
 
   products({
-    Key ?key,
+    Key? key,
     required this.ProductTypeId,
   }) : super(key: key);
 
@@ -31,12 +31,11 @@ class _productsState extends State<products> {
   bool revers = false;
 
   Widget build(BuildContext context) {
-    return BlocProvider(
+    return ChangeNotifierProvider(
       create: (context) =>
-          HomeCubit()..PostData(ProductId: widget.ProductTypeId),
-      child: BlocConsumer<HomeCubit, HomeState>(
-        listener: (context, state) {},
-        builder: (context, state) {
+          AppProvider()..PostData(ProductId: widget.ProductTypeId),
+      child: Consumer<AppProvider>(
+        builder: (context, Modal, child) {
           return Scaffold(
             backgroundColor: Colors.white,
             appBar: PreferredSize(
@@ -44,7 +43,7 @@ class _productsState extends State<products> {
               preferredSize: Size.fromHeight(120),
             ),
             body: ConditionalBuilder(
-              condition: state is! PostDataLoadingState,
+              condition: Modal.Product != null,
               builder: (context) => Container(
                 color: Colors.grey[300],
                 child: GridView.count(
@@ -52,16 +51,16 @@ class _productsState extends State<products> {
                   crossAxisCount: 2,
                   mainAxisSpacing: 1,
                   crossAxisSpacing: 1,
-                  childAspectRatio: 1 / 1.25,
-                  children: List.generate(
-                      HomeCubit.get(context).Product.data!.length, (index) {
-                    return BuildGrideView(
-                        HomeCubit.get(context).Product, index);
+                  childAspectRatio: 1 / 1.35,
+                  children: List.generate(Modal.Product!.data!.length, (index) {
+                    return BuildGrideView(Modal.Product!, index);
                   }),
                 ),
               ),
               fallback: (context) => Center(
-                child: CircularProgressIndicator(),
+                child: CircularProgressIndicator(
+                  color: Colors.black,
+                ),
               ),
             ),
           );
@@ -143,7 +142,7 @@ class _productsState extends State<products> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Text(
-                  '${Modal.data![index].productsOfferPrice} E',
+                  '${Modal.data![index].productsOfferPrice} \$',
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
@@ -156,7 +155,7 @@ class _productsState extends State<products> {
                   width: 20,
                 ),
                 Text(
-                  '${Modal.data![index].productsPrice} E',
+                  '${Modal.data![index].productsPrice} \$',
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(

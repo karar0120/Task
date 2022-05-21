@@ -4,8 +4,6 @@ class product {
   List<Data>? data;
   String? message;
 
-  product({this.statusCode, this.success, this.data, this.message});
-
   product.fromJson(Map<String, dynamic> json) {
     statusCode = json['status_code'];
     success = json['success'];

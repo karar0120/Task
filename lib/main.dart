@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:noon/Business_logic/cubit/App_cubit.dart';
+import 'package:noon/Business_logic/Provider/AppProvider.dart';
 import 'package:noon/Data/Web_server/webServer.dart';
+import 'package:provider/provider.dart';
 
 import 'Screens/HomePage.dart';
 import 'const/Bloc.observer.dart';
@@ -11,9 +12,8 @@ void main() {
         () async {
       WidgetsFlutterBinding.ensureInitialized();
       WebServer.init();
-
-      runApp(MyApp());
-
+      runApp(MyApp(
+      ));
     },
     blocObserver:MyBlocObserver() ,
   );
@@ -25,13 +25,13 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      debugShowCheckedModeBanner: false,
-
-      home: BlocProvider(
-        create: (context)=>HomeCubit()..GetdataFormApi(),
-          child: HomePage()),
+    return ChangeNotifierProvider(
+      create: (context)=>AppProvider()..GetdataFormApi(),
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        debugShowCheckedModeBanner: false,
+        home: HomePage(),
+      ),
     );
   }
 }
