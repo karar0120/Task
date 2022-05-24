@@ -1,6 +1,7 @@
 import 'package:conditional_builder/conditional_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:noon/Business_logic/Provider/AppProvider.dart';
+import 'package:noon/Business_logic/Provider/ProductsProvider.dart';
 import 'package:noon/Screens/Products.dart';
 import 'package:provider/provider.dart';
 import '../Data/Modal/categoriesModal.dart';
@@ -9,8 +10,8 @@ class Cateogries extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => AppProvider()..GetdataFormApi(),
-      child: Consumer<AppProvider>(
+      create: (context) => ProductProvider()..GetdataFormApi(),
+      child: Consumer<ProductProvider>(
         builder: (context, Modal, child) {
           return ConditionalBuilder(
             condition: Modal.Categories != null,

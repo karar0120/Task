@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 
-import '../../Data/Modal/categoriesModal.dart';
 import '../../Data/Modal/products.dart';
 import '../../Data/Web_server/webServer.dart';
 import '../../Screens/Cart.dart';
@@ -30,22 +29,10 @@ class AppProvider extends ChangeNotifier {
     "Profile",
     "Cart",
   ];
-  categories? Categories;
-
-  void GetdataFormApi() async {
-    WebServer.getdate(
-            url:
-                "https://sae-marketing.com/NOON/api/LoadProductsTypeCategoriesPage.php")
-        .then((value) {
-      final convert = jsonDecode(value.data);
-      Categories = categories.fromJson(convert);
-      notifyListeners();
-    }).catchError((error) {
-      // notifyListeners();
-    });
-  }
 
   product? Product;
+  List<Data>? SortData;
+  List<Data>? SortReversedData;
 
   void PostData({required String ProductId}) async {
     WebServer.PostData(
@@ -56,9 +43,31 @@ class AppProvider extends ChangeNotifier {
         }).then((value) {
       final convert = jsonDecode(value.data);
       Product = product.fromJson(convert);
+
+      SortData = Product!.data;
+      SortReversedData = Product!.data;
+      for (int i = 0; i < SortData!.length; i++) {
+        SortData![i].Sort = int.tryParse(SortData![i].productsOfferPrice!);
+        SortReversedData![i].SortReverse =
+            int.tryParse(SortReversedData![i].productsOfferPrice!);
+      }
       notifyListeners();
     }).catchError((error) {
       print(error.toString());
     });
   }
+
+  void Sorts() {
+    SortData!.sort((a, b) {
+      return a.Sort!.compareTo(b.Sort!);
+    });
+  }
+
+  void SortsReversed() {
+    SortReversedData!.sort((a, b) {
+      return b.SortReverse!.compareTo(a.SortReverse!);
+    });
+  }
+
+  String? sort;
 }

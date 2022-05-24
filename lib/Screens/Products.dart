@@ -28,8 +28,8 @@ class _productsState extends State<products> {
     "Woman shose",
     "Children",
   ];
-  bool revers = false;
-
+  bool isSort = false;
+  bool isSortReverse = false;
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) =>
@@ -37,39 +37,50 @@ class _productsState extends State<products> {
       child: Consumer<AppProvider>(
         builder: (context, Modal, child) {
           return Scaffold(
-            backgroundColor: Colors.white,
-            appBar: PreferredSize(
-              child: getAppbar(context),
-              preferredSize: Size.fromHeight(120),
-            ),
-            body: ConditionalBuilder(
-              condition: Modal.Product != null,
-              builder: (context) => Container(
-                color: Colors.grey[300],
-                child: GridView.count(
-                  reverse: revers,
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 1,
-                  crossAxisSpacing: 1,
-                  childAspectRatio: 1 / 1.35,
-                  children: List.generate(Modal.Product!.data!.length, (index) {
-                    return BuildGrideView(Modal.Product!, index);
-                  }),
-                ),
+              backgroundColor: Colors.white,
+              appBar: PreferredSize(
+                child: getAppbar(context),
+                preferredSize: Size.fromHeight(120),
               ),
-              fallback: (context) => Center(
-                child: CircularProgressIndicator(
-                  color: Colors.black,
+              body: ConditionalBuilder(
+                condition: Modal.Product != null,
+                builder: (context) => Container(
+                  color: Colors.grey[300],
+                  child: GridView.count(
+                    reverse: false,
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 1,
+                    crossAxisSpacing: 1,
+                    childAspectRatio: 1 / 1.35,
+                    children:
+                        List.generate(Modal.Product!.data!.length, (index) {
+                      if (isSort == true ) {
+                        Modal.Sorts();
+                        return BuildGrideView(Modal.SortData![index], index);
+                      } else if (isSortReverse == true) {
+                        Modal.SortsReversed();
+                        return BuildGrideView(
+                            Modal.SortReversedData![index], index);
+                      } else if (isSort == false && isSortReverse == false) {
+                        return BuildGrideView(
+                            Modal.Product!.data![index], index);
+                      }
+                      return BuildGrideView(Modal.Product!.data![index], index);
+                    }),
+                  ),
                 ),
-              ),
-            ),
-          );
+                fallback: (context) => Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.black,
+                  ),
+                ),
+              ));
         },
       ),
     );
   }
 
-  Widget BuildGrideView(product Modal, index) {
+  Widget BuildGrideView(Data Modal, index) {
     return SingleChildScrollView(
       physics: NeverScrollableScrollPhysics(),
       child: Padding(
@@ -82,10 +93,8 @@ class _productsState extends State<products> {
                   child: Image(
                     width: 150,
                     height: 150,
-                    image: NetworkImage(
-                        "${Modal.data![index].productsSecondImage}"),
+                    image: NetworkImage("${Modal.productsSecondImage}"),
                     fit: BoxFit.cover,
-                    //width: double.infinity,
                   ),
                 ),
                 Positioned(
@@ -113,14 +122,14 @@ class _productsState extends State<products> {
                   size: 22,
                 ),
                 Text(
-                  "(${Modal.data![index].productRate})",
+                  "(${Modal.productRate})",
                   style: TextStyle(fontSize: 11),
                 ),
                 SizedBox(
                   width: 10,
                 ),
                 Text(
-                  "${Modal.data![index].productTotalRates}",
+                  "${Modal.productTotalRates}",
                   style: TextStyle(fontSize: 11),
                 ),
               ],
@@ -128,7 +137,7 @@ class _productsState extends State<products> {
             Align(
               alignment: Alignment.topLeft,
               child: Text(
-                "     ${Modal.data![index].productsName} ",
+                "     ${Modal.productsName} ",
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
@@ -138,11 +147,10 @@ class _productsState extends State<products> {
               ),
             ),
             Row(
-              //mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Text(
-                  '${Modal.data![index].productsOfferPrice} \$',
+                  '${Modal.productsOfferPrice} \$',
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
@@ -155,7 +163,7 @@ class _productsState extends State<products> {
                   width: 20,
                 ),
                 Text(
-                  '${Modal.data![index].productsPrice} \$',
+                  '${Modal.productsPrice} \$',
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
@@ -255,117 +263,168 @@ class _productsState extends State<products> {
   }
 
   Widget Sort() {
-    return Container(
-        color: Colors.white,
-        height: 250,
-        width: MediaQuery.of(context).size.width,
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            //crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Sort By",
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  InkWell(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: Icon(
-                        Icons.cancel,
-                        size: 28,
-                      )),
-                ],
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Popular Item ",
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 20,
-                    ),
-                  ),
-                  Icon(
-                    Icons.check_circle,
-                    size: 28,
-                    color: Colors.grey,
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Price Low To High ",
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 20,
-                    ),
-                  ),
-                  Icon(
-                    Icons.check_circle,
-                    size: 28,
-                    color: Colors.grey,
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Price High To Low ",
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 20,
-                    ),
-                  ),
-                  Icon(
-                    Icons.check_circle,
-                    size: 28,
-                    color: Colors.grey,
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Rating High To Low ",
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 20,
-                    ),
-                  ),
-                  Icon(
-                    Icons.check_circle,
-                    size: 28,
-                    color: Colors.grey,
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ));
+    return ChangeNotifierProvider(
+      create: (context) =>
+          AppProvider()..PostData(ProductId: widget.ProductTypeId),
+      child: Consumer<AppProvider>(
+        builder: (context, Modal, child) {
+          return ConditionalBuilder(
+            condition: Modal.Product != null,
+            builder: (context) {
+              return StatefulBuilder(
+                builder: (context, setstate) {
+                  return Container(
+                      color: Colors.white,
+                      height: 350,
+                      width: MediaQuery.of(context).size.width,
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          //crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Sort By",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                InkWell(
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Icon(
+                                      Icons.cancel,
+                                      size: 50,
+                                    )),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Popular Item ",
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 20,
+                                  ),
+                                ),
+                                Radio(
+                                    activeColor: Colors.black,
+                                    value: "Popular Item",
+                                    groupValue: Modal.sort,
+                                    onChanged: (String? val) {
+                                      setstate(() {
+                                        Modal.sort = val;
+                                      });
+                                    })
+                              ],
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Price Low To High ",
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 20,
+                                  ),
+                                ),
+                                Radio(
+                                    activeColor: Colors.black,
+                                    value: "Price Low To High ",
+                                    groupValue: Modal.sort,
+                                    onChanged: (String? val) {
+                                      setstate(() {
+                                        Modal.sort = val;
+                                      });
+                                      if (isSort != true) {
+                                        setState(() {
+                                          isSortReverse = false;
+                                          isSort = true;
+                                        });
+                                      }
+                                    })
+                              ],
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Price High To Low ",
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 20,
+                                  ),
+                                ),
+                                Radio(
+                                    activeColor: Colors.black,
+                                    value: "Price High To Low",
+                                    groupValue: Modal.sort,
+                                    onChanged: (String? val) {
+                                      setstate(() {
+                                        Modal.sort = val;
+                                      });
+                                      if (isSortReverse==false) {
+
+                                        setState(() {
+                                          isSort = false;
+                                          isSortReverse = true;
+                                        });
+                                      }
+                                    })
+                              ],
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Rating High To Low ",
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 20,
+                                  ),
+                                ),
+                                Radio(
+                                    activeColor: Colors.black,
+                                    value: "Rating High To Low ",
+                                    groupValue: Modal.sort,
+                                    onChanged: (String? val) {
+                                      setstate(() {
+                                        Modal.sort = val;
+                                      });
+                                    })
+                              ],
+                            ),
+                          ],
+                        ),
+                      ));
+                },
+              );
+            },
+            fallback: (context) => Center(
+                child: CircularProgressIndicator(
+              color: Colors.black,
+            )),
+          );
+          //
+        },
+      ),
+    );
   }
 }

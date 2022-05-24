@@ -4,6 +4,7 @@ class product {
   List<Data>? data;
   String? message;
 
+
   product.fromJson(Map<String, dynamic> json) {
     statusCode = json['status_code'];
     success = json['success'];
@@ -26,6 +27,8 @@ class Data {
   String? productsName;
   String? productsPrice;
   String? productsOfferPrice;
+  int?Sort;
+  int?SortReverse;
   String? currencyID;
   String? productsStatus;
   String? productsDescription;
@@ -64,6 +67,8 @@ class Data {
   String? sellerStoreName;
   String? sellerCompanyLegelName;
   String? sellerCompanyPhoneNumber;
+  Data(productsID,productsPrice);
+
 
 
 
